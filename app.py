@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return f"<h1>Hello DevOps!</h1><p>Build: {os.environ.get('BUILD_NUMBER', 'local')}</p>"
+    return f"<h1>Hello GitOps!</h1><p>Build: {os.environ.get('BUILD_NUMBER', 'local')}</p>"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
