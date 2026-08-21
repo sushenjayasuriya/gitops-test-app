@@ -22,22 +22,23 @@ pipeline {
                 """
             }
         }
-        stage('Update GitHub YAML') {
+                stage('Update GitHub YAML') {
             steps {
-                // Use sed to replace the image tag in deployment.yaml with the new build number
-                sh "sed -i 's|image: hello-app:latest|image: hello-app:${BUILD_NUMBER}|g' deployment.yaml"
-
-                // Configure git, commit, and push the change back to GitHub
                 sh """
-                    git config user.email "jenkins@utech-iiot.lk"
-                    git config user.name "Jenkins Bot"
-                    git add deployment.yaml
-                    git commit -m "Update image tag to hello-app:${BUILD_NUMBER} [skip ci]"
-                    git push https://github.com/sushenjayasuriya/gitops-test-app.git HEAD:main
+                    sed -i 's|image: hello-app:latest|image: hello-app:${BUILD_NUMBER}|g' deployment.yaml
                 """
+                
+                withCredentials([gitUsernamePassword(credentialsId: 'github-pat', gitToolName: 'Default')]) {
+                    sh """
+                        git config user.email "jenkins@utech-iiot.lk"
+                        git config user.name "Jenkins Bot"
+                        git add deployment.yaml
+                        git commit -m "Update image tag to hello-app:${BUILD_NUMBER} [skip ci]"
+                        git push https://github.com/sushenjayasuriya/gitops-test-app.git HEAD:main
+                    """
+                }
             }
         }
-    }
     post {
         always {
             sh "rm -f /tmp/app.tar"
