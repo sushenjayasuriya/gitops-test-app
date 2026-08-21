@@ -25,7 +25,7 @@ pipeline {
         stage('Update GitHub YAML') {
             steps {
                 sh """
-                    sed -i 's|image: hello-app:latest|image: hello-app:${BUILD_NUMBER}|g' deployment.yaml
+                    sed -i 's|image: hello-app:.*|image: hello-app:${BUILD_NUMBER}|g' deployment.yaml
                 """
                 
                 withCredentials([gitUsernamePassword(credentialsId: 'github-pat')]) {
