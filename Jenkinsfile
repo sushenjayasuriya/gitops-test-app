@@ -22,13 +22,13 @@ pipeline {
                 """
             }
         }
-                stage('Update GitHub YAML') {
+        stage('Update GitHub YAML') {
             steps {
                 sh """
                     sed -i 's|image: hello-app:latest|image: hello-app:${BUILD_NUMBER}|g' deployment.yaml
                 """
                 
-                withCredentials([gitUsernamePassword(credentialsId: 'github-pat', gitToolName: 'Default')]) {
+                withCredentials([gitUsernamePassword(credentialsId: 'github-pat')]) {
                     sh """
                         git config user.email "jenkins@utech-iiot.lk"
                         git config user.name "Jenkins Bot"
@@ -39,6 +39,7 @@ pipeline {
                 }
             }
         }
+    }
     post {
         always {
             sh "rm -f /tmp/app.tar"
