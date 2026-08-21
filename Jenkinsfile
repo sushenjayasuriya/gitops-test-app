@@ -5,17 +5,15 @@ pipeline {
     }
     stages {
         // --- NEW STAGE: The "Loop Breaker" ---
-        stage('Check for Skip') {
+                stage('Check for Skip') {
             steps {
                 script {
-                    // Get the commit message from the last commit
                     def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
                     
-                    // If the commit message contains [skip ci], stop the build gracefully
                     if (commitMessage.contains('[skip ci]')) {
                         echo "🚫 Build skipped. Commit message contains [skip ci]"
-                        currentBuild.result = 'SUCCESS'
-                        error("Skipped")
+                        currentBuild.result = 'SUCCESS'  // Sets the build to GREEN
+                        return // Gracefully exits the pipeline without error
                     } else {
                         echo "✅ Proceeding with build (no [skip ci] found)"
                     }
