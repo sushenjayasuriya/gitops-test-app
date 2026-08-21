@@ -4,11 +4,25 @@ pipeline {
         IMAGE_NAME = "hello-app:${BUILD_NUMBER}"
     }
     stages {
-        stage('Checkout') {
-            steps { 
-                checkout scm
+        // --- NEW STAGE: The "Loop Breaker" ---
+        stage('Check for Skip') {
+            steps {
+                script {
+                    // Get the commit message from the last commit
+                    def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                    
+                    // If the commit message contains [skip ci], stop the build gracefully
+                    if (commitMessage.contains('[skip ci]')) {
+                        echo "🚫 Build skipped. Commit message contains [skip ci]"
+                        currentBuild.result = 'SUCCESS'
+                        error("Skipped")
+                    } else {
+                        echo "✅ Proceeding with build (no [skip ci] found)"
+                    }
+                }
             }
         }
+        
         stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${IMAGE_NAME} ."
