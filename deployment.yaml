@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: hello-app:91
+        image: hello-app:92
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
